@@ -53,6 +53,7 @@ Use os seguintes endpoints da FakeStore API:
 - Uso do **shadcn-ui**
 - Deploy funcional na **Vercel**
 - Feedbacks de carregamento, sucesso e erro
+- Testes com **Jest** ou **React Testing Library**
 
 ---
 
