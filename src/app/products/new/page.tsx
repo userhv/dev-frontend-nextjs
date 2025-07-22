@@ -9,11 +9,11 @@ export default function CreateProductPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: Partial<import('@/services/types').Product>) {
     setLoading(true);
     setError(null);
     try {
-      await createProduct(data);
+      await createProduct(data as import('@/services/types').Product);
       router.push('/');
     } catch {
       setError('Erro ao criar produto.');

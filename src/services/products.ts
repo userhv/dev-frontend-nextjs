@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Product } from './types';
 
 const API_URL = 'https://fakestoreapi.com/products';
 
@@ -12,12 +13,12 @@ export const getProduct = async (id: string | number) => {
   return data;
 };
 
-export const createProduct = async (product: any) => {
+export const createProduct = async (product: Product) => {
   const { data } = await axios.post(API_URL, product);
   return data;
 };
 
-export const updateProduct = async (id: string | number, product: any) => {
+export const updateProduct = async (id: string | number, product: Product) => {
   const { data } = await axios.put(`${API_URL}/${id}`, product);
   return data;
 };

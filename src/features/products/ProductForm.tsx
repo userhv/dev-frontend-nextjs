@@ -5,9 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
+
 interface ProductFormProps {
   initialData?: Partial<Product>;
-  onSubmit: (data: Partial<Product>) => void;
+  onSubmit: (data: Partial<Product>) => void | Promise<void>;
   loading?: boolean;
   submitLabel?: string;
 }
@@ -19,6 +20,7 @@ export default function ProductForm({ initialData = {}, onSubmit, loading, submi
     description: initialData.description || '',
     category: initialData.category || '',
     image: initialData.image || '',
+    id: initialData.id,
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -26,9 +28,9 @@ export default function ProductForm({ initialData = {}, onSubmit, loading, submi
     setForm((prev) => ({ ...prev, [name]: name === 'price' ? Number(value) : value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSubmit(form);
+    await onSubmit(form);
   }
 
   return (

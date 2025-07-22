@@ -25,11 +25,11 @@ function EditProductClient({ product, id }: { product: Product; id: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: Partial<Product>) {
     setLoading(true);
     setError(null);
     try {
-      await updateProduct(id, data);
+      await updateProduct(id, data as Product);
       router.push(`/products/${id}`);
     } catch {
       setError('Erro ao atualizar produto.');

@@ -1,3 +1,5 @@
+
+import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/services/types';
 
@@ -8,7 +10,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="border rounded p-4 flex flex-col items-center">
-      <img src={product.image} alt={product.title} className="h-32 object-contain mb-2" />
+      <Image src={product.image} alt={product.title} width={128} height={128} className="h-32 object-contain mb-2" />
       <h2 className="font-bold text-lg mb-1">{product.title}</h2>
       <p className="text-sm text-gray-600 mb-2">{product.category}</p>
       <span className="font-semibold text-green-600 mb-2">R$ {product.price}</span>
