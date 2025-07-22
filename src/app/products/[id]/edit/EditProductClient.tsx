@@ -3,6 +3,9 @@ import { Product } from '@/services/types';
 import ProductForm from '@/features/products/ProductForm';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import BackButton from '../BackButton';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function EditProductClient({ product, id }: { product: Product; id: string }) {
   const router = useRouter();
@@ -25,9 +28,10 @@ export default function EditProductClient({ product, id }: { product: Product; i
 
   return (
     <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Editar Produto</h1>
-      {error && <div className="text-red-600 mb-2">{error}</div>}
-      <ProductForm initialData={product} onSubmit={handleSubmit} loading={loading} submitLabel="Salvar" />
+      <BackButton />
+      <div className="rounded-2xl shadow-xl bg-white p-0 sm:p-4 w-full min-h-[420px] sm:min-h-[480px] flex flex-col justify-center">
+        <ProductForm initialData={product} onSubmit={handleSubmit} loading={loading} submitLabel="Salvar" />
+      </div>
     </div>
   );
 }
