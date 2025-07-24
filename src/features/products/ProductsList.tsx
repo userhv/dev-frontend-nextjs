@@ -1,20 +1,46 @@
 "use client";
+
 import { Product } from '@/services/types';
-import { getProducts } from '@/services/products';
-import React, { useEffect, useState } from 'react';
-import ProductCard from './ProductCard';
+import React, { useState } from 'react';
+import { useProducts } from '@/hooks/useProducts';
+import { useSearchParams } from 'next/navigation';
+import {ProductCard} from './ProductCard';
+import { updateProduct } from '@/services/products';
+import { Button } from '@/components/ui/button';
 
-export default function ProductsList() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+function SearchBar({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="relative w-full max-w-2xl flex-1">
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder="Pesquisar por nome ou categoria..."
+        className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-base bg-white shadow outline-none"
+        aria-label="Pesquisar produtos"
+      />
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
+      </span>
+    </div>
+  );
+}
+export const ProductsList = () => {
+  const { products, loading, error } = useProducts();
+  const [search, setSearch] = useState('');
+  const searchParams = useSearchParams();
+  const categoriaSelecionada = searchParams?.get('categoria') || '';
 
-  useEffect(() => {
-    getProducts()
-      .then(setProducts)
-      .catch(() => setError('Erro ao carregar produtos.'))
-      .finally(() => setLoading(false));
-  }, []);
+  // Filtro de produtos por nome ou categoria
+  const filteredProducts = products.filter((product) => {
+    const term = search.trim().toLowerCase();
+    if (categoriaSelecionada && product.category !== categoriaSelecionada) return false;
+    if (!term) return true;
+    return (
+      product.title.toLowerCase().includes(term) ||
+      (product.category && product.category.toLowerCase().includes(term))
+    );
+  });
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-12">
@@ -32,11 +58,42 @@ export default function ProductsList() {
     </div>
   );
 
+  const handleUpdate = async (data: Product) => {
+    await updateProduct(data.id, data);
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
+    <>
+      <div className="mb-2 flex flex-col gap-2 w-full">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:justify-between">
+          <SearchBar value={search} onChange={setSearch} />
+          <div className="w-full sm:w-auto flex justify-end mt-3 sm:mt-0">
+            <Button asChild className="gap-2 min-w-[160px]">
+              <a href="/products/new">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                Novo Produto
+              </a>
+            </Button>
+          </div>
+        </div>
+        <div className="text-xs text-gray-400 font-normal mt-1 ml-1">
+          {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {filteredProducts.length === 0 ? (
+          <div className="col-span-full text-center text-gray-500 py-12 text-lg">Nenhum produto encontrado.</div>
+        ) : (
+          filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onUpdate={handleUpdate}
+              categories={Array.from(new Set(products.map((p) => p.category))).filter(Boolean)}
+            />
+          ))
+        )}
+      </div>
+    </>
   );
 }

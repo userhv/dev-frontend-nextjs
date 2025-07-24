@@ -1,10 +1,12 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import Sidebar from '../Sidebar';
-import { usePathname } from 'next/navigation';
-
+// Mock next/navigation para evitar erro do useRouter e usePathname
 jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
   usePathname: jest.fn(),
 }));
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Sidebar } from '../Sidebar';
+
+import { usePathname } from 'next/navigation';
 
 describe('Sidebar', () => {
   beforeEach(() => {

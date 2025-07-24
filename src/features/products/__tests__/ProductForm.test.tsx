@@ -1,5 +1,10 @@
+// Mock next/image para evitar erro de ambiente
+jest.mock('next/image', () => (props: any) => {
+  // eslint-disable-next-line jsx-a11y/alt-text
+  return <img {...props} />;
+});
 import { render, screen, fireEvent } from '@testing-library/react';
-import ProductForm from '../ProductForm';
+import { ProductForm } from '../ProductForm';
 
 describe('ProductForm', () => {
   it('renderiza todos os campos e envia os dados', () => {
@@ -15,6 +20,7 @@ describe('ProductForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /salvar|criar/i }));
 
     expect(handleSubmit).toHaveBeenCalledWith({
+      id: 0,
       title: 'Produto Teste',
       price: 99,
       category: 'Categoria Teste',

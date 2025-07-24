@@ -1,5 +1,14 @@
+// Mock next/image para evitar erro de ambiente
+jest.mock('next/image', () => (props: any) => {
+  // eslint-disable-next-line jsx-a11y/alt-text
+  return <img {...props} />;
+});
+// Mock next/navigation para evitar erro do useRouter
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+}));
 import { render, screen } from '@testing-library/react';
-import ProductCard from '../ProductCard';
+import { ProductCard } from '../ProductCard';
 
 describe('ProductCard', () => {
   const product = {
@@ -17,7 +26,8 @@ describe('ProductCard', () => {
     expect(screen.getByText('Categoria Teste')).toBeInTheDocument();
     expect(screen.getByText('R$ 99')).toBeInTheDocument();
     expect(screen.getByAltText(/produto teste/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /ver detalhes/i })).toHaveAttribute('href', '/products/1');
+    // O botão "Ver produto" tem aria-label detalhado
+    expect(screen.getByRole('button', { name: /ver detalhes de produto teste/i })).toBeInTheDocument();
   });
 
   it('trunca visualmente título e descrição longos', () => {
@@ -28,10 +38,10 @@ describe('ProductCard', () => {
     expect(desc.className).toMatch(/line-clamp/);
   });
 
-  it('link é acessível e pode receber foco', () => {
+  it('botão "Ver produto" é acessível e pode receber foco', () => {
     render(<ProductCard product={product} />);
-    const link = screen.getByRole('link', { name: /ver detalhes/i });
-    link.focus();
-    expect(link).toHaveFocus();
+    const button = screen.getByRole('button', { name: /ver detalhes de produto teste/i });
+    button.focus();
+    expect(button).toHaveFocus();
   });
 });

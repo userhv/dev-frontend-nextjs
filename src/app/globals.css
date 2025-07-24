@@ -1,3 +1,6 @@
+html { overflow-y: scroll !important; }
+/* Garante que a barra de rolagem do body nunca desapareça, mesmo com modais/dropdowns abertos */
+body { overflow-y: scroll !important; }
 @import "tailwindcss";
 @import "tw-animate-css";
 

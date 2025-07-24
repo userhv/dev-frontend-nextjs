@@ -1,18 +1,16 @@
 "use client";
 import { Product } from '@/services/types';
-import ProductForm from '@/features/products/ProductForm';
+import { ProductForm } from '@/features/products/ProductForm';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import BackButton from '../BackButton';
-import Image from 'next/image';
-import Link from 'next/link';
 
-export default function EditProductClient({ product, id }: { product: Product; id: string }) {
+export const EditProductClient = ({ product, id }: { product: Product; id: string }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(data: Partial<Product>) {
+  const handleSubmit = async (data: Partial<Product>) => {
     setLoading(true);
     setError(null);
     try {

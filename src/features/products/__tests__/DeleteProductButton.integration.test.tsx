@@ -4,27 +4,12 @@ jest.mock('next/navigation', () => ({
 }));
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import DeleteProductButton from '../DeleteProductButton';
-import { useRouter } from 'next/navigation';
-
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() })
-}));
 import * as productsApi from '@/services/products';
 
 jest.mock('@/services/products');
 
-describe('DeleteProductButton', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('abre o dialog ao clicar', () => {
-    render(<DeleteProductButton id={1} />);
-    fireEvent.click(screen.getByLabelText('Excluir produto'));
-    expect(screen.getByText(/confirmar exclusão/i)).toBeInTheDocument();
-  });
-
-  it('chama deleteProduct ao confirmar', async () => {
+describe('DeleteProductButton integração', () => {
+  it('exibe dialog e executa deleção', async () => {
     (productsApi.deleteProduct as jest.Mock).mockResolvedValue({});
     render(<DeleteProductButton id={1} />);
     fireEvent.click(screen.getByLabelText('Excluir produto'));
@@ -35,12 +20,15 @@ describe('DeleteProductButton', () => {
     });
   });
 
-  it('mostra feedback de sucesso', async () => {
-    (productsApi.deleteProduct as jest.Mock).mockResolvedValue({});
-    render(<DeleteProductButton id={1} />);
+  it('exibe mensagem de erro ao falhar', async () => {
+    (productsApi.deleteProduct as jest.Mock).mockRejectedValue(new Error('Falha na API'));
+    render(<DeleteProductButton id={2} />);
     fireEvent.click(screen.getByLabelText('Excluir produto'));
     const excluirButton = screen.getByRole('button', { name: /^excluir$/i });
     fireEvent.click(excluirButton);
-    // O feedback de sucesso pode ser exibido em outro componente, ajuste se necessário
+    await waitFor(() => {
+      expect(productsApi.deleteProduct).toHaveBeenCalledWith(2);
+      expect(screen.getByText(/erro ao excluir produto/i)).toBeInTheDocument();
+    });
   });
 });

@@ -1,5 +1,16 @@
+// Mock next/image para evitar erro de ambiente
+jest.mock('next/image', () => (props: any) => {
+  // eslint-disable-next-line jsx-a11y/alt-text
+  return <img {...props} />;
+});
+
+// Mock next/navigation para evitar erro do useRouter e useSearchParams
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
+  useSearchParams: () => ({ get: jest.fn(() => '') })
+}));
 import { render, screen, waitFor } from '@testing-library/react';
-import ProductsList from '../ProductsList';
+import { ProductsList } from '../ProductsList';
 import * as productsApi from '@/services/products';
 import { Product } from '@/services/types';
 
