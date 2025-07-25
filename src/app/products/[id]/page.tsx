@@ -2,6 +2,7 @@ import { getProduct } from '@/services/products';
 import { notFound } from 'next/navigation';
 import BackButton from './BackButton';
 import Image from 'next/image';
+import { logger } from '@/lib/logger';
 
 interface ProductPageProps {
   params: Promise<{
@@ -55,7 +56,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
     );
   } catch (error) {
-    console.error('Error loading product:', error);
+    logger.error('Error loading product:', { error });
     notFound();
   }
 }

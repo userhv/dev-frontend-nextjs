@@ -1,6 +1,7 @@
 import { EditProductClient } from './EditProductClient';
 import { getProduct } from '@/services/products';
 import { notFound } from 'next/navigation';
+import { logger } from '@/lib/logger';
 
 interface EditProductPageProps {
   params: Promise<{
@@ -18,7 +19,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     }
     return <EditProductClient product={product} id={id} />;
   } catch (error) {
-    console.error('Error loading product:', error);
+    logger.error('Error loading product:', { productId: id, error });
     notFound();
   }
 }
