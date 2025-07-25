@@ -51,16 +51,10 @@ npm install
 yarn install
 ```
 
-### 3. Configure as variáveis de ambiente (opcional)
-```bash
-cp .env.example .env.local
-# Edite o arquivo .env.local conforme necessário
-```
-
-### 4. Configuração do shadcn/ui
+### 3. Configuração do shadcn/ui
 O projeto já vem configurado com shadcn/ui. Os componentes estão em `src/components/ui/` e podem ser customizados conforme necessário.
 
-### 5. Execute o projeto em desenvolvimento
+### 4. Execute o projeto em desenvolvimento
 ```bash
 npm run dev
 # ou
@@ -136,8 +130,8 @@ src/
 
 O sistema possui autenticação simulada para demonstração:
 
-- **Usuário:** `admin`
-- **Senha:** `password`
+- **Usuário:** `maxup`
+- **Senha:** `maxup`
 
 O sistema utiliza localStorage para simular sessões e inclui guards de rota para proteger páginas que requerem autenticação.
 
@@ -195,14 +189,6 @@ O projeto mantém alta cobertura de testes:
 - **Functions:** ~50%
 - **Lines:** ~58%
 
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
 ### Padrões de Commit
 O projeto segue o padrão de Conventional Commits:
 - `feat:` nova funcionalidade
@@ -213,17 +199,3 @@ O projeto segue o padrão de Conventional Commits:
 - `test:` testes
 - `chore:` tarefas de build/config
 
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 🔗 Links Úteis
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS](https://tailwindcss.com)
-- [shadcn/ui](https://ui.shadcn.com)
-- [Vercel](https://vercel.com)
-
----
-
-**Desenvolvido com ❤️ usando Next.js e TypeScript**
