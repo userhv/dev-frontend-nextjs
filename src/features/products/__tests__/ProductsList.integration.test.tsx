@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { ProductsList } from '../ProductsList';
 import * as productsApi from '@/services/products';
 
-// Mock next/image para evitar erro de ambiente
 jest.mock('next/image', () => {
   const MockImage = (props: {
     src: string;
@@ -18,7 +17,6 @@ jest.mock('next/image', () => {
   return MockImage;
 });
 
-// Mock next/navigation para evitar erro do useRouter
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
   useSearchParams: jest.fn(),
@@ -43,7 +41,6 @@ describe('ProductsList integração', () => {
       { id: 1, title: 'Produto 1', price: 10, description: 'Desc', category: 'Cat 1', image: 'https://img.com/img1.jpg' },
       { id: 2, title: 'Produto 2', price: 20, description: 'Desc', category: 'Cat 2', image: 'https://img.com/img2.jpg' },
     ]);
-    // Simula query param categoria
     window.history.pushState({}, '', '/?categoria=Cat%201');
     render(<ProductsList />);
     await waitFor(() => {

@@ -6,7 +6,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FiTrash2 } from 'react-icons/fi';
 
-const DeleteProductButton = ({ id }: { id: number }) => {
+export const DeleteProductButton = ({ id }: { id: number }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -155,4 +155,3 @@ const DeleteProductButton = ({ id }: { id: number }) => {
     </>
   );
 };
-export default DeleteProductButton;

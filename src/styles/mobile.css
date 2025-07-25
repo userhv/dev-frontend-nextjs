@@ -1,4 +1,3 @@
-/* Animações para mobile e touch */
 @keyframes slide-up {
   from {
     transform: translateY(100%);
@@ -45,7 +44,6 @@
   }
 }
 
-/* Classes utilitárias */
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
@@ -62,18 +60,15 @@
   animation: scale-in 0.2s ease-out;
 }
 
-/* Melhorias para touch devices */
 .touch-manipulation {
   touch-action: manipulation;
 }
 
-/* Smooth scrolling para mobile */
 @media (max-width: 768px) {
   html {
     scroll-behavior: smooth;
   }
   
-  /* Prevent zoom on input focus in iOS */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -84,7 +79,6 @@
     font-size: 16px;
   }
   
-  /* Better touch targets */
   button,
   .btn,
   a[role="button"],
@@ -94,7 +88,6 @@
   }
 }
 
-/* Safe area para devices com notch */
 @supports (padding: max(0px)) {
   .safe-area-inset-top {
     padding-top: max(1rem, env(safe-area-inset-top));
@@ -113,13 +106,11 @@
   }
 }
 
-/* Improved focus states for keyboard navigation */
 .focus-visible:focus-visible {
   outline: 2px solid theme('colors.blue.500');
   outline-offset: 2px;
 }
 
-/* Loading states with better performance */
 @keyframes pulse-improved {
   0%, 100% {
     opacity: 1;
@@ -133,7 +124,6 @@
   animation: pulse-improved 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Card hover effects for desktop */
 @media (hover: hover) {
   .card-hover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -145,9 +135,7 @@
   }
 }
 
-/* Dark mode improvements for mobile */
 @media (prefers-color-scheme: dark) {
-  /* Better contrast for dark mode on mobile */
   .dark-mobile-contrast {
     background-color: #0f172a;
     color: #f1f5f9;

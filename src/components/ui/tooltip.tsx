@@ -18,7 +18,6 @@ export const Tooltip = ({ content, children, position = "top", className }: Tool
   const triggerRef = useRef<HTMLDivElement>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  // Detectar dispositivos touch
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -26,7 +25,6 @@ export const Tooltip = ({ content, children, position = "top", className }: Tool
   }, []);
 
   const showTooltip = () => {
-    // Em dispositivos touch, não mostrar tooltip no hover
     if (isTouchDevice) return;
     
     if (timeoutRef.current) clearTimeout(timeoutRef.current);

@@ -13,25 +13,21 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    // Verificar tema salvo no localStorage
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
-      // Verificar preferência do sistema
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       setTheme(prefersDark ? "dark" : "light");
     }
   }, []);
 
   useEffect(() => {
-    // Aplicar tema ao DOM
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
-    // Salvar no localStorage
     localStorage.setItem("theme", theme);
   }, [theme]);
 

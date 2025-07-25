@@ -11,7 +11,7 @@ Object.defineProperty(window, 'scrollTo', {
 });
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import DeleteProductButton from '../DeleteProductButton';
+import {DeleteProductButton} from '../DeleteProductButton';
 import * as productsApi from '@/services/products';
 
 jest.mock('@/services/products');

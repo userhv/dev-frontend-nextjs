@@ -38,12 +38,10 @@ export function ProductsList() {
     const term = search.toLowerCase();
     const category = searchParams?.get('categoria');
     
-    // Filtro por categoria (query param)
     if (category && product.category !== category) {
       return false;
     }
     
-    // Filtro por texto de busca
     if (term) {
       return (
         (product.title && product.title.toLowerCase().includes(term)) ||
@@ -55,7 +53,6 @@ export function ProductsList() {
     return true;
   });
 
-  // Grid adaptativo baseado no dispositivo
   const getGridCols = () => {
     if (isMobile) return 'grid-cols-1 gap-4';
     if (isTablet) return 'grid-cols-2 gap-4';

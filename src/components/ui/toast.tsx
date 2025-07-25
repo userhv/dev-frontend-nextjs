@@ -34,7 +34,6 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     const newToast = { ...toast, id };
     setToasts(prev => [...prev, newToast]);
 
-    // Auto remove after duration
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, toast.duration || 5000);

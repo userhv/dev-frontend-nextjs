@@ -42,13 +42,10 @@ export const useDevice = (): DeviceInfo => {
       });
     };
 
-    // Initial check
     updateDeviceInfo();
 
-    // Listen for resize and orientation changes
     window.addEventListener('resize', updateDeviceInfo);
     window.addEventListener('orientationchange', () => {
-      // Delay to ensure orientation change is complete
       setTimeout(updateDeviceInfo, 100);
     });
 

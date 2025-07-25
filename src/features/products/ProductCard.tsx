@@ -5,7 +5,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { useState } from 'react';
 import { ProductDetailDialog } from './ProductDetailDialog';
 import { EditProductDialog } from './EditProductDialog';
-import DeleteProductButton from './DeleteProductButton';
+import {DeleteProductButton} from './DeleteProductButton';
 import { Product } from '@/services/types';
 import { useDevice } from '@/hooks/useDevice';
 

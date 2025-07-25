@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-// Schema base para validação de URLs
 const urlSchema = z.string().url({ message: 'URL inválida' });
 
-// Schema para validação de Product
 export const ProductSchema = z.object({
   id: z.number().optional(),
   title: z.string()
@@ -23,7 +21,6 @@ export const ProductSchema = z.object({
     .trim(),
   image: urlSchema.refine(
     (url) => {
-      // Verificar se é uma URL de imagem válida
       const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i;
       return imageExtensions.test(url) || url.includes('img') || url.includes('image');
     },
@@ -31,7 +28,6 @@ export const ProductSchema = z.object({
   ),
 });
 
-// Schema para formulário de produto (price como string para input)
 export const ProductFormSchema = z.object({
   title: z.string()
     .min(1, 'Título é obrigatório')
@@ -59,7 +55,6 @@ export const ProductFormSchema = z.object({
   ),
 });
 
-// Schema para login
 export const LoginSchema = z.object({
   email: z.string()
     .min(1, 'Email é obrigatório')
@@ -71,7 +66,6 @@ export const LoginSchema = z.object({
     .max(50, 'Senha muito longa'),
 });
 
-// Schema para busca/filtros
 export const SearchSchema = z.object({
   query: z.string().max(100, 'Busca muito longa').optional(),
   category: z.string().max(50, 'Categoria inválida').optional(),
@@ -87,13 +81,11 @@ export const SearchSchema = z.object({
   path: ['minPrice']
 });
 
-// Tipos TypeScript derivados dos schemas
 export type Product = z.infer<typeof ProductSchema>;
 export type ProductFormData = z.infer<typeof ProductFormSchema>;
 export type LoginData = z.infer<typeof LoginSchema>;
 export type SearchData = z.infer<typeof SearchSchema>;
 
-// Funções utilitárias para validação
 export const validateProduct = (data: unknown) => {
   return ProductSchema.safeParse(data);
 };
@@ -110,7 +102,6 @@ export const validateSearch = (data: unknown) => {
   return SearchSchema.safeParse(data);
 };
 
-// Função para converter FormData para Product
 export const parseProductForm = (formData: ProductFormData): Omit<Product, 'id'> => {
   return {
     title: formData.title,
@@ -121,7 +112,6 @@ export const parseProductForm = (formData: ProductFormData): Omit<Product, 'id'>
   };
 };
 
-// Função para formatar erros de validação
 export const formatValidationErrors = (error: z.ZodError) => {
   return error.issues.map((err: z.ZodIssue) => ({
     field: err.path.join('.'),
@@ -129,7 +119,6 @@ export const formatValidationErrors = (error: z.ZodError) => {
   }));
 };
 
-// Função para obter apenas a primeira mensagem de erro
 export const getFirstErrorMessage = (error: z.ZodError): string => {
   return error.issues[0]?.message || 'Dados inválidos';
 };

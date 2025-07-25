@@ -1,4 +1,3 @@
-// Mock next/image para evitar erro de ambiente
 jest.mock('next/image', () => {
   const MockImage = (props: {
     src: string;

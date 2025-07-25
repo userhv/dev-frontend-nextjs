@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useAuth } from '../useAuth';
 
-// Mock router
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn() })
 }));

@@ -14,7 +14,6 @@ const CreateProductPage = () => {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Busca categorias ao montar
   React.useEffect(() => {
     setCategoriesLoading(true);
     getProducts().then((products: import('@/services/types').Product[]) => {
@@ -23,16 +22,13 @@ const CreateProductPage = () => {
     }).finally(() => setCategoriesLoading(false));
   }, []);
 
-  // Garantir que o scroll esteja habilitado nesta página
   React.useEffect(() => {
-    // Restaurar scroll da página
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.width = '';
     
     return () => {
-      // Cleanup se necessário
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';

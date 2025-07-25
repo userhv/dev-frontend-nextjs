@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { logger } from './logger';
 
 export const api = axios.create({
   baseURL: 'https://fakestoreapi.com',
@@ -8,23 +9,23 @@ export const api = axios.create({
   },
 });
 
-// Interceptor para tratamento global de erros
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error);
+    logger.apiError('API Error', error, {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+    });
     
-    // Erro de timeout
     if (error.code === 'ECONNABORTED') {
       throw new Error('Timeout: A requisição demorou muito para responder');
     }
     
-    // Erro de rede (sem resposta do servidor)
     if (!error.response) {
       throw new Error('Erro de rede: Verifique sua conexão com a internet');
     }
     
-    // Tratamento baseado no status code
     const { status, data } = error.response;
     
     switch (status) {
@@ -50,14 +51,8 @@ api.interceptors.response.use(
   }
 );
 
-// Interceptor para requisições (pode ser usado para adicionar auth tokens no futuro)
 api.interceptors.request.use(
   (config) => {
-    // Aqui podemos adicionar headers de autenticação quando necessário
-    // const token = localStorage.getItem('authToken');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
     return config;
   },
   (error) => {
