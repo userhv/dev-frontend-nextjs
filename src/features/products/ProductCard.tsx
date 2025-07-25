@@ -7,6 +7,7 @@ import { ProductDetailDialog } from './ProductDetailDialog';
 import { EditProductDialog } from './EditProductDialog';
 import DeleteProductButton from './DeleteProductButton';
 import { Product } from '@/services/types';
+import { useDevice } from '@/hooks/useDevice';
 
 interface ProductCardProps {
   product: Product;
@@ -18,7 +19,7 @@ interface ProductCardProps {
 const FeedbackSuccess = ({ show }: { show: boolean }) => {
   if (!show) return null;
   return (
-    <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-xs px-4 py-2 rounded-full shadow z-20 fade-in-out">
+    <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-green-600 dark:bg-green-700 text-white text-xs px-4 py-2 rounded-full shadow z-20 fade-in-out">
       Produto atualizado com sucesso!
     </div>
   );
@@ -28,18 +29,18 @@ const FeedbackSuccess = ({ show }: { show: boolean }) => {
 const ActionButtons = ({
   onDetail,
   onEdit,
-  onDelete,
+  productId,
   productTitle
 }: {
   onDetail: (e: React.MouseEvent) => void;
   onEdit: (e: React.MouseEvent) => void;
-  onDelete: (e: React.MouseEvent) => void;
+  productId: number;
   productTitle: string;
 }) => {
   return (
-    <div className="flex flex-row gap-2 mt-auto w-full justify-end items-center w-full bg-gray-50 rounded-lg shadow-sm p-0">
+    <div className="flex flex-row gap-1 sm:gap-2 mt-auto w-full justify-between items-center bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm p-2">
       <button
-        className="px-4 py-1.5 rounded border border-gray-200 bg-white text-gray-700 text-sm font-normal hover:bg-gray-100 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer w-full"
+        className="flex-1 px-2 sm:px-3 py-2 rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm font-normal hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 transition-colors focus:outline-none cursor-pointer"
         onClick={onDetail}
         aria-label={`Ver detalhes de ${productTitle}`}
         type="button"
@@ -48,18 +49,16 @@ const ActionButtons = ({
         Ver produto
       </button>
       <span
-        className="p-2 rounded text-gray-500 hover:text-yellow-600 transition-colors cursor-pointer"
+        className="flex items-center justify-center p-2 rounded text-gray-500 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
         onClick={onEdit}
         aria-label={`Editar ${productTitle}`}
         role="button"
         tabIndex={0}
         title="Editar produto"
       >
-        <FiEdit2 size={18} />
+        <FiEdit2 size={16} className="sm:w-[18px] sm:h-[18px]" />
       </span>
-      <span onClick={onDelete} className="flex items-center">
-        <DeleteProductButton id={undefined as any} />
-      </span>
+      <DeleteProductButton id={productId} />
     </div>
   );
 };
@@ -69,6 +68,7 @@ export const ProductCard = ({ product, onUpdate, categories }: ProductCardProps)
   const [openDetail, setOpenDetail] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { isMobile, touchDevice } = useDevice();
 
   const showSuccess = () => {
     setSuccess(true);
@@ -78,9 +78,11 @@ export const ProductCard = ({ product, onUpdate, categories }: ProductCardProps)
   return (
     <>
       <div
-        className="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-shadow p-4 flex flex-col items-center relative overflow-hidden min-h-[420px] w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto focus-within:ring-2 focus-within:ring-blue-200 cursor-pointer"
+        className={`group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-lg dark:hover:shadow-xl transition-all duration-300 p-3 sm:p-4 flex flex-col items-center relative overflow-hidden min-h-[380px] sm:min-h-[420px] w-full max-w-sm mx-auto focus-within:ring-2 focus-within:ring-blue-200 dark:focus-within:ring-blue-800 cursor-pointer
+        ${touchDevice ? 'active:scale-95 active:shadow-md' : 'hover:shadow-xl'}
+        ${isMobile ? 'touch-manipulation' : ''}`}
         tabIndex={0}
-        aria-label={`Produto: ${product.title}`}
+        aria-label={`Produto: ${product.title}. Clique para ver detalhes`}
         onClick={(e) => {
           if (
             e.target instanceof HTMLElement &&
@@ -93,27 +95,44 @@ export const ProductCard = ({ product, onUpdate, categories }: ProductCardProps)
         role="button"
       >
         <FeedbackSuccess show={success} />
-        <div className="rounded-xl flex items-center justify-center w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 mb-4 overflow-hidden bg-transparent">
+
+        <div className="rounded-xl flex items-center justify-center w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 mb-3 sm:mb-4 overflow-hidden bg-transparent">
           <div className="w-full h-full flex items-center justify-center overflow-hidden bg-transparent">
-            <Image src={product.image} alt={product.title} width={256} height={256} className="object-contain max-w-full max-h-full bg-transparent" />
+            <Image 
+              src={product.image} 
+              alt={product.title} 
+              width={isMobile ? 160 : 224} 
+              height={isMobile ? 160 : 224} 
+              className="object-contain max-w-full max-h-full bg-transparent transition-transform duration-300 group-hover:scale-110" 
+              loading="lazy"
+              sizes={isMobile ? "160px" : "224px"}
+            />
           </div>
         </div>
+        
         <div className="flex items-center justify-between w-full mb-2">
-          <span className="inline-block text-xs font-semibold uppercase tracking-wide bg-blue-50 text-blue-700 px-2 py-0.5 rounded">{product.category}</span>
-          <span className="font-semibold text-lg text-green-700 bg-green-50 px-2 py-0.5 rounded">R$ {product.price}</span>
+          <span className="inline-block text-xs font-medium uppercase tracking-wide bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full truncate max-w-[60%]">
+            {product.category}
+          </span>
+          <span className="font-bold text-base sm:text-lg text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-1 rounded-full whitespace-nowrap">
+            R$ {product.price}
+          </span>
         </div>
-        <h2 className="font-bold text-lg sm:text-xl text-left mb-1 line-clamp-2 min-h-[2.5em] w-full">{product.title}</h2>
-        <p className="text-sm text-gray-600 line-clamp-3 text-left mb-4 min-h-[3em] w-full">{product.description}</p>
+        
+        <h2 className="font-bold text-base sm:text-lg text-center mb-2 line-clamp-2 min-h-[2.5em] w-full text-gray-900 dark:text-gray-100 leading-tight">
+          {product.title}
+        </h2>
+        
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-3 text-center mb-4 min-h-[3em] w-full leading-relaxed">
+          {product.description}
+        </p>
+        
         <ActionButtons
           onDetail={e => { e.stopPropagation(); setOpenDetail(true); }}
           onEdit={e => { e.stopPropagation(); setOpenEdit(true); }}
-          onDelete={e => e.stopPropagation()}
+          productId={product.id}
           productTitle={product.title}
-        >
-          {/* DeleteProductButton precisa do id do produto, mas ActionButtons é genérico. Ajuste abaixo. */}
-        </ActionButtons>
-        {/* O DeleteProductButton real é renderizado abaixo para garantir o id correto */}
-        <span style={{ display: 'none' }}><DeleteProductButton id={product.id} /></span>
+        />
       </div>
       <ProductDetailDialog product={product} open={openDetail} onClose={() => setOpenDetail(false)} />
       <EditProductDialog

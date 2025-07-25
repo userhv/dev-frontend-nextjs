@@ -23,7 +23,9 @@ describe('useProductForm', () => {
   it('atualiza campos com handleChange', () => {
     const { result } = renderHook(() => useProductForm());
     act(() => {
-      result.current.handleChange({ target: { name: 'title', value: 'Novo' } } as any);
+      result.current.handleChange({ 
+        target: { name: 'title', value: 'Novo' } 
+      } as React.ChangeEvent<HTMLInputElement>);
     });
     expect(result.current.form.title).toBe('Novo');
   });
@@ -41,7 +43,9 @@ describe('useProductForm', () => {
   it('valida customizado', () => {
     const { result } = renderHook(() => useProductForm({ title: 'T', price: 1, category: 'C', image: 'I', description: 'D' }));
     act(() => {
-      result.current.handleChange({ target: { name: 'title', value: '' } } as any);
+      result.current.handleChange({ 
+        target: { name: 'title', value: '' } 
+      } as React.ChangeEvent<HTMLInputElement>);
     });
     let valid;
     act(() => {
@@ -52,7 +56,13 @@ describe('useProductForm', () => {
   });
 
   it('getParsedData converte preço para número', () => {
-    const { result } = renderHook(() => useProductForm({ price: '123' as any }));
+    const { result } = renderHook(() => useProductForm({ 
+      title: 'T', 
+      price: '123' as unknown as number, 
+      category: 'C', 
+      image: 'I', 
+      description: 'D' 
+    }));
     expect(result.current.getParsedData().price).toBe(123);
   });
 

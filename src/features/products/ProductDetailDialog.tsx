@@ -1,8 +1,8 @@
 
 import Image from 'next/image';
 import { Product } from '@/services/types';
-import React from 'react';
-import { Dialog, DialogDescription } from '@/components/ui/dialog';
+import React, { useEffect } from 'react';
+import { useDevice } from '@/hooks/useDevice';
 
 interface ProductDetailDialogProps {
   product: Product;
@@ -11,35 +11,109 @@ interface ProductDetailDialogProps {
 }
 
 export const ProductDetailDialog = ({ product, open, onClose }: ProductDetailDialogProps) => {
+  const { isMobile } = useDevice();
+  
+  // Desabilitar scroll da página quando o dialog está aberto
+  useEffect(() => {
+    if (open) {
+      // Salvar o scroll atual
+      const scrollY = window.scrollY;
+      // Desabilitar scroll
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      return () => {
+        // Restaurar scroll
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [open]);
+
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onOpenChange={nextOpen => { if (!nextOpen) onClose(); }}>
-      <div className="flex flex-col items-center p-2 sm:p-3 rounded-2xl bg-white w-full max-w-md mx-auto focus:outline-none overflow-y-auto max-h-[95dvh] relative min-h-[420px]">
-        <div className="w-full flex flex-row items-center justify-between mb-1 mt-0 gap-1">
-          <span className="block text-lg sm:text-xl font-bold text-gray-900 px-2 truncate" title={product.title} style={{lineHeight: 1.2}}>{product.title}</span>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+        onClick={onClose}
+      />
+      
+      {/* Modal Content */}
+      <div className={`relative z-10 w-full ${isMobile ? 'mx-2 max-w-[calc(100vw-16px)]' : 'mx-4 max-w-2xl'} max-h-[95vh] sm:max-h-[90vh] bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden`}>
+        {/* Header */}
+        <div className="flex items-center justify-between p-3 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100 pr-2">
+            {isMobile ? 'Detalhes' : 'Detalhes do Produto'}
+          </h2>
           <button
-            aria-label="Fechar"
-            className="w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:bg-gray-100 text-2xl cursor-pointer transition"
             onClick={onClose}
-            tabIndex={0}
+            className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+            aria-label="Fechar"
           >
-            <span className="sr-only">Fechar</span>
-            ×
+            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <div className="h-2 w-full" />
-        <div className="rounded-xl flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44 mb-2 overflow-hidden bg-transparent">
-          <div className="w-full h-full flex items-center justify-center overflow-hidden bg-transparent">
-            <Image src={product.image} alt={product.title} width={192} height={192} className="object-contain max-w-full max-h-full bg-transparent" />
+        
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto max-h-[calc(95vh-60px)] sm:max-h-[calc(90vh-80px)] p-3 sm:p-6">
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8'}`}>
+            {/* Image Section */}
+            <div className="flex flex-col order-1 lg:order-1">
+              <div className={`${isMobile ? 'aspect-[4/3]' : 'aspect-square'} bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl overflow-hidden mb-3 sm:mb-4`}>
+                <Image 
+                  src={product.image} 
+                  alt={product.title} 
+                  width={400} 
+                  height={400} 
+                  className="w-full h-full object-contain p-2 sm:p-4" 
+                />
+              </div>
+            </div>
+
+            {/* Product Info Section */}
+            <div className="flex flex-col space-y-4 sm:space-y-6 order-2 lg:order-2">
+              {/* Title */}
+              <div>
+                <h1 className={`${isMobile ? 'text-lg' : 'text-xl sm:text-2xl lg:text-3xl'} font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight`}>
+                  {product.title}
+                </h1>
+              </div>
+
+              {/* Category and Price - Mobile Stack */}
+              <div className="flex flex-col gap-3">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 w-fit">
+                  {product.category}
+                </span>
+                <span className={`${isMobile ? 'text-xl' : 'text-2xl sm:text-3xl'} font-bold text-green-600 dark:text-green-400`}>
+                  R$ {product.price}
+                </span>
+              </div>
+
+              {/* Description */}
+              <div>
+                <h3 className={`${isMobile ? 'text-sm' : 'text-base sm:text-lg'} font-semibold text-gray-900 dark:text-gray-100 mb-2 sm:mb-3`}>
+                  Descrição
+                </h3>
+                <div className={`${isMobile ? 'text-sm' : 'text-sm sm:text-base'} text-gray-600 dark:text-gray-400 leading-relaxed`}>
+                  <p className="whitespace-pre-wrap break-words overflow-wrap-anywhere">
+                    {product.description}
+                  </p>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
-        <div className="flex items-center justify-between w-full mb-1">
-          <span className="inline-block text-xs font-semibold uppercase tracking-wide bg-blue-50 text-blue-700 px-2 py-0.5 rounded">{product.category}</span>
-          <span className="font-semibold text-lg text-green-700 bg-green-50 px-2 py-0.5 rounded">R$ {product.price}</span>
-        </div>
-        <DialogDescription>
-          <p className="text-sm text-gray-600 text-left mb-2 w-full whitespace-pre-line">{product.description}</p>
-        </DialogDescription>
       </div>
-    </Dialog>
+    </div>
   );
 };

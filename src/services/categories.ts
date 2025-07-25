@@ -1,10 +1,10 @@
-import axios from 'axios';
+import api from '@/lib/api';
 
-const API_URL = 'https://fakestoreapi.com/products/categories';
+const API_CATEGORIES_PATH = '/products/categories';
 
 export class CategoriesService {
   static async getCategories(): Promise<string[]> {
-    const { data } = await axios.get(API_URL);
+    const { data } = await api.get(API_CATEGORIES_PATH);
     return data;
   }
 }

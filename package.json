@@ -7,9 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "test:prepare": "echo '{\n  \"presets\": [\"next/babel\", \"@babel/preset-react\"]\n}' > .babelrc",
     "test:cleanup": "rm -f .babelrc",
-    "test": "npm run test:prepare && jest --passWithNoTests && npm run test:cleanup"
+    "test": "npm run test:prepare && jest --passWithNoTests && npm run test:cleanup",
+    "test:watch": "npm run test:prepare && jest --watch --passWithNoTests",
+    "test:coverage": "npm run test:prepare && jest --coverage --passWithNoTests && npm run test:cleanup",
+    "test:ci": "npm run test:prepare && jest --ci --coverage --watchAll=false --passWithNoTests && npm run test:cleanup",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next out node_modules/.cache",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
@@ -24,7 +31,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.0.10"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.27.1",

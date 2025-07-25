@@ -1,7 +1,11 @@
-// Mock next/image para evitar erro de ambiente
-jest.mock('next/image', () => (props: any) => {
-  // eslint-disable-next-line jsx-a11y/alt-text
-  return <img {...props} />;
+// Mock next/image para testes
+jest.mock('next/image', () => {
+  const MockedImage = (props: { [key: string]: unknown }) => {
+    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+    return <img {...props} />;
+  };
+  MockedImage.displayName = 'MockedImage';
+  return MockedImage;
 });
 
 // Mock next/navigation para evitar erro do useRouter e useSearchParams
@@ -29,7 +33,8 @@ describe('ProductsList', () => {
   it('exibe loading enquanto carrega', () => {
     (productsApi.getProducts as jest.Mock).mockReturnValue(new Promise(() => {}));
     render(<ProductsList />);
-    expect(screen.getByText(/carregando produtos/i)).toBeInTheDocument();
+    // Verificar se há elementos com a classe de loading (cards skeleton)
+    expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 
   it('exibe erro ao falhar', async () => {

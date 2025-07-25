@@ -1,7 +1,16 @@
 // Mock next/image para evitar erro de ambiente
-jest.mock('next/image', () => (props: any) => {
-  // eslint-disable-next-line jsx-a11y/alt-text
-  return <img {...props} />;
+jest.mock('next/image', () => {
+  const MockImage = (props: {
+    src: string;
+    alt: string;
+    fill?: boolean;
+    className?: string;
+  }) => {
+    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+    return <img {...props} />;
+  };
+  MockImage.displayName = 'MockImage';
+  return MockImage;
 });
 // Mock next/navigation para evitar erro do useRouter
 jest.mock('next/navigation', () => ({

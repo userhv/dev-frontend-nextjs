@@ -1,32 +1,32 @@
 
-import axios from 'axios';
+import api from '@/lib/api';
 import { Product } from './types';
 
-const API_URL = 'https://fakestoreapi.com/products';
+const API_PRODUCTS_PATH = '/products';
 
 export class ProductsService {
   static async getProducts(): Promise<Product[]> {
-    const { data } = await axios.get(API_URL);
+    const { data } = await api.get(API_PRODUCTS_PATH);
     return data;
   }
 
   static async getProduct(id: string | number): Promise<Product> {
-    const { data } = await axios.get(`${API_URL}/${id}`);
+    const { data } = await api.get(`${API_PRODUCTS_PATH}/${id}`);
     return data;
   }
 
   static async createProduct(product: Product): Promise<Product> {
-    const { data } = await axios.post(API_URL, product);
+    const { data } = await api.post(API_PRODUCTS_PATH, product);
     return data;
   }
 
   static async updateProduct(id: string | number, product: Product): Promise<Product> {
-    const { data } = await axios.put(`${API_URL}/${id}`, product);
+    const { data } = await api.put(`${API_PRODUCTS_PATH}/${id}`, product);
     return data;
   }
 
   static async deleteProduct(id: string | number): Promise<Product> {
-    const { data } = await axios.delete(`${API_URL}/${id}`);
+    const { data } = await api.delete(`${API_PRODUCTS_PATH}/${id}`);
     return data;
   }
 }

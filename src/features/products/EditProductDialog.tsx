@@ -1,14 +1,13 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {ProductForm} from './ProductForm';
 import { Product } from '@/services/types';
-import { Dialog, DialogTitle } from '@/components/ui/dialog';
 
 interface EditProductDialogProps {
   product: Product;
   open: boolean;
   onClose: () => void;
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: Product) => Promise<void>;
   categories?: string[];
 }
 
@@ -16,46 +15,83 @@ export const EditProductDialog = ({ product, open, onClose, onSave, categories }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Desabilitar scroll da página quando o dialog está aberto
+  useEffect(() => {
+    if (open) {
+      // Salvar o scroll atual
+      const scrollY = window.scrollY;
+      // Desabilitar scroll
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      return () => {
+        // Restaurar scroll
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [open]);
+
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onOpenChange={open => { if (!open) onClose(); }}>
-      <div className="flex flex-col items-center p-2 sm:p-4 bg-white w-full max-w-6xl mx-auto focus:outline-none relative">
-        <div className="flex items-center w-full mb-2 px-2 sm:px-4">
-          <DialogTitle>
-            <span id="edit-product-title" className="text-xl sm:text-2xl font-bold text-gray-800 text-left">Editar informações</span>
-          </DialogTitle>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+        onClick={onClose}
+      />
+      
+      {/* Modal Content */}
+      <div className="relative z-10 w-full max-w-6xl mx-4 max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            Editar Produto
+          </h2>
           <button
-            aria-label="Fechar"
-            className="w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:bg-gray-100 text-2xl font-bold leading-none cursor-pointer transition ml-auto"
             onClick={onClose}
-            tabIndex={0}
-            autoFocus
+            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+            aria-label="Fechar"
           >
-            <span className="sr-only">Fechar</span>
-            ×
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <div className="w-full">
+        
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto max-h-[calc(90vh-80px)] p-4">
           <ProductForm
             initialData={product}
             onSubmit={async (data) => {
               setLoading(true);
               setError(null);
               try {
-                await onSave(data);
+                await onSave(data as Product);
                 onClose();
-              } catch (e: any) {
-                setError(e?.message || 'Erro ao salvar.');
+              } catch (e: unknown) {
+                setError((e as Error)?.message || 'Erro ao salvar.');
               } finally {
                 setLoading(false);
               }
             }}
             loading={loading}
-            submitLabel="Salvar"
+            submitLabel="Salvar Alterações"
             categories={categories}
           />
-          {error && <div className="text-red-600 text-sm mt-2 text-center">{error}</div>}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+            </div>
+          )}
         </div>
       </div>
-    </Dialog>
+    </div>
   );
 };

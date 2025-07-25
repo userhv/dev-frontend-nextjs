@@ -5,8 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Loader2, XCircle, ChevronDown } from 'lucide-react';
 import { useProductForm } from '@/hooks/useProductForm';
-import * as Select from '@radix-ui/react-select';
-import { Card } from '@/components/ui/card';
 import Image from 'next/image';
 
 
@@ -36,11 +34,77 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
     setError,
     handleChange,
     validate,
-    getParsedData,
-    reset
+    getParsedData
   } = useProductForm(initialData);
 
   const [success, setSuccess] = React.useState(false);
+
+  // Custom Select Component que não bloqueia scroll
+  const CustomSelect = ({ value, onValueChange, placeholder, options }: {
+    value: string;
+    onValueChange: (value: string) => void;
+    placeholder: string;
+    options: string[];
+  }) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const selectRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+          setIsOpen(false);
+        }
+      };
+
+      if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen]);
+
+    const handleSelect = (option: string) => {
+      onValueChange(option);
+      setIsOpen(false);
+    };
+
+    return (
+      <div className="relative w-full" ref={selectRef}>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm flex items-center justify-between cursor-pointer text-left"
+          aria-label="Categoria do produto"
+        >
+          <span className={value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>
+            {value || placeholder}
+          </span>
+          <ChevronDown className={`w-5 h-5 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        
+        {isOpen && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-60 overflow-auto">
+            {options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => handleSelect(option)}
+                className={`w-full px-4 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:bg-blue-50 dark:focus:bg-blue-900/30 focus:outline-none transition-colors text-base ${
+                  value === option 
+                    ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' 
+                    : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +130,7 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
   };
 
   return (
-    <Card className="p-0 sm:p-6 max-w-4xl w-full mx-auto rounded-2xl bg-white border-0 shadow-none">
+    <div className="p-0 sm:p-6 max-w-4xl w-full mx-auto">
       <form
         onSubmit={handleSubmit}
         autoComplete="off"
@@ -81,20 +145,20 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
                 alt={form.title || 'Imagem do produto'}
                 width={220}
                 height={220}
-                className="object-contain rounded-2xl bg-white border border-gray-200 w-full max-w-[220px] max-h-[220px] aspect-square shadow-md transition-all duration-200 md:max-w-[340px] md:max-h-[340px] md:w-[340px] md:h-[340px]"
+                className="object-contain rounded-2xl bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 w-full max-w-[220px] max-h-[220px] aspect-square shadow-md transition-all duration-200 md:max-w-[340px] md:max-h-[340px] md:w-[340px] md:h-[340px]"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             ) : form.image && form.image.trim() ? (
-              <div className="w-full max-w-[220px] h-[220px] flex items-center justify-center bg-red-50 border border-red-200 text-red-500 rounded-2xl text-center text-xs aspect-square shadow-inner md:max-w-[340px] md:h-[340px]">
+              <div className="w-full max-w-[220px] h-[220px] flex items-center justify-center bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-500 dark:text-red-400 rounded-2xl text-center text-xs aspect-square shadow-inner md:max-w-[340px] md:h-[340px]">
                 URL inválida de imagem
               </div>
             ) : (
-              <div className="w-full max-w-[220px] h-[220px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 rounded-2xl border border-dashed border-gray-300 text-gray-400 text-base aspect-square shadow-inner md:max-w-[340px] md:h-[340px]">Pré-visualização</div>
+              <div className="w-full max-w-[220px] h-[220px] flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 dark:from-blue-900/20 dark:to-gray-700 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 text-base aspect-square shadow-inner md:max-w-[340px] md:h-[340px]">Pré-visualização</div>
             )}
               <div className="flex flex-col gap-1 w-full mt-3 md:mt-4">
-                <Label htmlFor="image" className="font-semibold text-gray-700">
+                <Label htmlFor="image" className="font-semibold text-gray-700 dark:text-gray-300">
                   URL da imagem <span className="text-red-600" title="Obrigatório" aria-label="obrigatório">*</span>
                 </Label>
                 <div className="flex gap-2 flex-col sm:flex-row">
@@ -104,14 +168,14 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
                   value={form.image}
                   onChange={handleChange}
                   placeholder="Cole ou digite a URL da imagem (jpg, png, webp...)"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   aria-required="true"
                   aria-label="URL da imagem do produto"
                   autoComplete="off"
                 />
                   <button
                     type="button"
-                    className="px-3 py-2 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 font-medium hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm w-full sm:w-auto cursor-pointer"
+                    className="px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600 transition text-sm w-full sm:w-auto cursor-pointer"
                     title="Colar da área de transferência"
                     tabIndex={0}
                     onClick={async () => {
@@ -133,13 +197,13 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
         {/* Campos do formulário */}
         <div className="flex-1 flex flex-col gap-4 md:gap-6 min-w-0 justify-center">
           <div className="flex flex-col gap-1">
-            <Label htmlFor="title" className="font-semibold text-gray-700">
+            <Label htmlFor="title" className="font-semibold text-gray-700 dark:text-gray-300">
               Título <span className="text-red-600" title="Obrigatório" aria-label="obrigatório">*</span>
             </Label>
-              <Input id="title" name="title" value={form.title} onChange={handleChange} placeholder="Título do produto" autoFocus className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base" aria-required="true" aria-label="Título do produto" />
+              <Input id="title" name="title" value={form.title} onChange={handleChange} placeholder="Título do produto" autoFocus className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" aria-required="true" aria-label="Título do produto" />
           </div>
           <div className="flex flex-col gap-1">
-            <Label htmlFor="price" className="font-semibold text-gray-700">
+            <Label htmlFor="price" className="font-semibold text-gray-700 dark:text-gray-300">
               Preço <span className="text-red-600" title="Obrigatório" aria-label="obrigatório">*</span>
             </Label>
               <Input
@@ -150,51 +214,29 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
                 value={form.price}
                 onChange={handleChange}
                 placeholder="R$ 99,99"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base bg-white"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 aria-required="true"
                 aria-label="Preço do produto"
                 autoComplete="off"
               />
           </div>
           <div className="flex flex-col gap-1">
-            <Label htmlFor="category" className="font-semibold text-gray-700">
+            <Label htmlFor="category" className="font-semibold text-gray-700 dark:text-gray-300">
               Categoria <span className="text-red-600" title="Obrigatório" aria-label="obrigatório">*</span>
             </Label>
             {categories && categories.length > 0 ? (
-              <Select.Root value={form.category} onValueChange={(value: string) => setForm(prev => ({ ...prev, category: value }))}>
-                <Select.Trigger
-                  className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base bg-white shadow-sm flex items-center justify-between cursor-pointer"
-                  aria-label="Categoria do produto"
-                  id="category"
-                  name="category"
-                >
-                  <Select.Value placeholder="Selecione uma categoria" />
-                  <Select.Icon className="ml-2 text-gray-400">
-                    <ChevronDown className="w-5 h-5" />
-                  </Select.Icon>
-                </Select.Trigger>
-                <Select.Portal>
-                  <Select.Content position="popper" sideOffset={4} className="z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-0 min-w-[var(--radix-select-trigger-width)]">
-                    <Select.Viewport className="p-1">
-                      {categories.map((cat) => (
-                        <Select.Item
-                          key={cat}
-                          value={cat}
-                          className="px-4 py-2 rounded-md text-base text-gray-700 cursor-pointer focus:bg-blue-50 focus:text-blue-700 data-[state=checked]:bg-blue-100 data-[state=checked]:text-blue-700 outline-none select-none"
-                        >
-                          <Select.ItemText>{cat}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                    </Select.Viewport>
-                  </Select.Content>
-                </Select.Portal>
-              </Select.Root>
+              <CustomSelect
+                value={form.category}
+                onValueChange={(value: string) => setForm(prev => ({ ...prev, category: value }))}
+                placeholder="Selecione uma categoria"
+                options={categories}
+              />
             ) : (
-              <Input id="category" name="category" value={form.category} onChange={handleChange} placeholder="Categoria do produto" className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base" aria-required="true" aria-label="Categoria do produto" />
+              <Input id="category" name="category" value={form.category} onChange={handleChange} placeholder="Categoria do produto" className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" aria-required="true" aria-label="Categoria do produto" />
             )}
           </div>
           <div className="flex flex-col gap-1">
-            <Label htmlFor="description" className="font-semibold text-gray-700">
+            <Label htmlFor="description" className="font-semibold text-gray-700 dark:text-gray-300">
               Descrição <span className="text-red-600" title="Obrigatório" aria-label="obrigatório">*</span>
             </Label>
             <textarea
@@ -203,7 +245,7 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
               value={form.description}
               onChange={handleChange}
               placeholder="Descreva o produto com detalhes, características, diferenciais, etc."
-              className="w-full min-h-[260px] resize-y border border-gray-300 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base bg-white"
+              className="w-full min-h-[260px] resize-y border border-gray-300 dark:border-gray-600 rounded-lg p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-base bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               aria-required="true"
               aria-label="Descrição detalhada do produto"
               style={{ minHeight: 260 }}
@@ -214,18 +256,18 @@ export const ProductForm = ({ initialData = {}, onSubmit, loading, submitLabel =
             {submitLabel}
           </Button>
           {success && (
-            <div className="flex items-center gap-2 text-green-700 bg-green-50 border border-green-100 rounded p-2 mt-2 text-xs animate-fade-in justify-center">
+            <div className="flex items-center gap-2 text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded p-2 mt-2 text-xs animate-fade-in justify-center">
               <CheckCircle2 className="w-4 h-4" /> Salvo com sucesso!
             </div>
           )}
           {error && (
-            <div className="flex items-center gap-2 text-red-700 bg-red-50 border border-red-100 rounded p-2 mt-2 text-xs animate-fade-in justify-center">
+            <div className="flex items-center gap-2 text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded p-2 mt-2 text-xs animate-fade-in justify-center">
               <XCircle className="w-4 h-4" /> {error}
             </div>
           )}
         </div>
       </div>
     </form>
-  </Card>
+  </div>
 )
 }
