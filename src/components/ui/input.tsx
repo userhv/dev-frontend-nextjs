@@ -2,8 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-// ...removido duplicado...
-const Input = ({ className, type, ...props }: React.ComponentProps<"input">) => {
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <input
       type={type}
@@ -16,6 +15,7 @@ const Input = ({ className, type, ...props }: React.ComponentProps<"input">) => 
       )}
       {...props}
     />
-  );
-};
-export { Input };
+  )
+}
+
+export { Input }

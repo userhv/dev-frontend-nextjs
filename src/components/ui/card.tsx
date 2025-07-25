@@ -13,7 +13,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -26,7 +26,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -36,7 +36,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -46,7 +46,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -59,7 +59,7 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -69,7 +69,7 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -79,7 +79,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
       {...props}
     />
   )
-};
+}
 
 export {
   Card,
