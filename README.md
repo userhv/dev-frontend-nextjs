@@ -1,6 +1,6 @@
 # 🛍️ Dev Frontend Next.js - Sistema de Gerenciamento de Produtos
 
-Um sistema moderno de gerenciamento de produtos desenvolvido com Next.js 15, TypeScript, Tailwind CSS e shadcn/ui. O projeto inclui funcionalidades completas de CRUD, autenticação simulada, testes automatizados e pipeline CI/CD com deploy automático no Vercel.
+Um sistema de gerenciamento de produtos desenvolvido com Next.js 15, TypeScript, Tailwind CSS e shadcn/ui. O projeto inclui funcionalidades completas de CRUD, autenticação simulada, testes automatizados e pipeline CI/CD com deploy automático no Vercel.
 
 ## 🚀 Funcionalidades
 
